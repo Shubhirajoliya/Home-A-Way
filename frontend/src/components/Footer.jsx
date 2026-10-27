@@ -1,0 +1,10 @@
+import React, { useState } from 'react';
+import { ArrowUpRight, Heart, Mail, MapPin, ShieldCheck } from 'lucide-react';
+import './hotelpro-redesign.css';
+
+export default function Footer({ setView }) {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const subscribe = (event) => { event.preventDefault(); setMessage('Thanks for your interest! Newsletter sign-up is a demo and has not saved your email.'); setEmail(''); };
+  return <footer className="hp-footer"><div className="hp-footer-main"><div className="hp-footer-brand"><span className="hp-footer-wordmark"><span>Home</span> Away</span><p>Thoughtful stays for the stories you haven't made yet.</p><span className="hp-footer-promise"><Heart size={15}/> Made for feeling at home, wherever you go.</span></div><div className="hp-footer-links"><strong>Explore</strong><button onClick={() => setView?.('rooms')}>Find a stay <ArrowUpRight size={14}/></button><button onClick={() => setView?.('cart')}>Trip cart <ArrowUpRight size={14}/></button><button onClick={() => setView?.('mybookings')}>My bookings <ArrowUpRight size={14}/></button></div><div className="hp-footer-links"><strong>Our promise</strong><span><ShieldCheck size={15}/> Clear booking steps</span><span><MapPin size={15}/> Thoughtful hospitality</span><span><Heart size={15}/> Comfort-first choices</span></div><div className="hp-footer-newsletter"><strong>A little travel inspiration</strong><p>Occasional notes for your next change of scenery.</p><form onSubmit={subscribe}><label className="hp-sr-only" htmlFor="footer-email">Email address</label><div><Mail size={16}/><input id="footer-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Your email address" required/></div><button className="hp-button hp-button-primary" type="submit" aria-label="Join newsletter"><ArrowUpRight size={17}/></button></form>{message && <small role="status">{message}</small>}</div></div><div className="hp-footer-bottom"><span>© {new Date().getFullYear()} Home Away. A hospitality demo experience.</span><span>Designed for easier, warmer trip planning.</span></div></footer>;
+}

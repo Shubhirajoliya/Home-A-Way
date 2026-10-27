@@ -1,0 +1,19 @@
+import React, { useEffect, useState } from 'react';
+import { ArrowRight, BedDouble, CalendarDays, Heart, Minus, Plus, ShieldCheck, ShoppingBag, Trash2 } from 'lucide-react';
+import './hotelpro-redesign.css';
+import { readCart, removeFromCart, writeCart } from './cartUtils';
+
+export default function Cart({ setView }) {
+  const [items, setItems] = useState(() => readCart());
+  useEffect(() => { const sync = (event) => setItems(event.detail || readCart()); window.addEventListener('homeaway-cart-updated', sync); return () => window.removeEventListener('homeaway-cart-updated', sync); }, []);
+  const remove = (id) => { removeFromCart(id); setItems(readCart()); };
+  const subtotal = items.reduce((sum, item) => sum + Number(item.pricePerNight || 0), 0);
+  return <main className="hp-page hp-cart-page">
+    <div className="hp-cart-hero"><div><span className="hp-eyebrow"><ShoppingBag size={14}/> YOUR TRIP, TAKING SHAPE</span><h1>A little list of <em>places to love.</em></h1><p>Keep your favourite stays together, compare them, and choose the one that feels right.</p></div><div className="hp-cart-hero-art"><Heart size={42}/><span>{items.length} {items.length === 1 ? 'stay' : 'stays'} saved</span></div></div>
+    <div className="hp-cart-layout"><section className="hp-cart-items"><div className="hp-section-heading"><div><h2>Your trip cart</h2><p>Room prices shown per night, before dates are selected.</p></div><span className="hp-result-count">{items.length} saved</span></div>
+      {items.length === 0 ? <div className="hp-state-panel hp-cart-empty"><span className="hp-empty-icon"><ShoppingBag size={28}/></span><h3>Your trip is a blank page</h3><p>Save stays you like and they will be waiting here when you're ready.</p><button className="hp-button hp-button-primary" onClick={() => setView('rooms')}>Explore stays <ArrowRight size={17}/></button></div> : <div className="hp-cart-list">{items.map((item) => <article className="hp-cart-item" key={item._id}><img src={item.image || 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=500&q=80'} alt={item.name} loading="lazy"/><div className="hp-cart-item-copy"><span className="hp-eyebrow">{item.roomType || 'YOUR STAY'}</span><h3>{item.name}</h3><p>{item.description || 'A welcoming space for your next getaway.'}</p><span className="hp-cart-capacity"><BedDouble size={15}/> Up to {item.maxCapacity || 2} guests</span><button className="hp-cart-remove" onClick={() => remove(item._id)}><Trash2 size={15}/> Remove</button></div><div className="hp-cart-item-price"><strong>${item.pricePerNight}</strong><span>/ night</span></div></article>)}</div>}
+    </section>
+    <aside className="hp-cart-summary"><span className="hp-eyebrow">YOUR NEXT STEP</span><h2>Trip summary</h2><div className="hp-summary-line"><span>Saved stays</span><strong>{items.length}</strong></div><div className="hp-summary-line"><span>From (per night)</span><strong>${subtotal}</strong></div><p className="hp-summary-note">Your final total depends on your dates and length of stay.</p><button className="hp-button hp-button-primary hp-button-full" disabled={!items.length} onClick={() => setView('checkout')}>Continue to checkout <ArrowRight size={17}/></button><div className="hp-cart-trust"><ShieldCheck size={18}/><span>Transparent pricing<br/><small>Demo checkout — no real payment is collected.</small></span></div><button className="hp-text-button" onClick={() => setView('rooms')}>Continue exploring</button></aside></div>
+    <section className="hp-cart-reassurance"><div><ShieldCheck size={21}/><span><strong>Thoughtful choices</strong><small>Keep options together before deciding.</small></span></div><div><CalendarDays size={21}/><span><strong>Flexible planning</strong><small>Pick dates at checkout.</small></span></div><div><Heart size={21}/><span><strong>Your trip, your pace</strong><small>Remove or add stays any time.</small></span></div></section>
+  </main>;
+}
